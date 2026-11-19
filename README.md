@@ -202,6 +202,7 @@ After installing, you'll get tab completion when typing `conductor <TAB>`.
     * [Task Commands](#task-commands)
     * [Schedule Commands](#schedule-commands)
     * [Secret Commands](#secret-commands)
+    * [Integration Commands](#integration-commands)
     * [Webhook Commands](#webhook-commands)
     * [API Gateway Commands](#api-gateway-commands)
       * [Service Management](#service-management)
@@ -388,6 +389,34 @@ echo "secret_value" | conductor secret put my_secret
 # From file
 cat secret.txt | conductor secret put my_secret
 ```
+
+---
+
+### Integration Commands
+
+Discover Connected Apps and manage saved connections on an Enterprise server. Set the target profile’s server type to Enterprise or pass `--server-type Enterprise`.
+
+```
+conductor integration <command> [arguments] [flags]
+```
+
+| Command | Description |
+|---------|-------------|
+| `types` | List enabled integration types (optionally filter by `--category <category>`) |
+| `type-config <type>` | Show the configuration fields for an integration type |
+| `list` | List visible saved connections (filter with `--type <type>`) |
+| `get <name>` | Show connection metadata and configured field names |
+| `operations --type <type>` | List operations offered by an integration type |
+| `operations [connection]` | List operations for the named saved connection |
+| `create [json_payload]` | Create a connection from JSON, a file (`--file`), or stdin |
+| `update <name> [json_payload]` | Update the description, enabled state, or individual configuration fields from JSON, a file (`--file`), or stdin |
+| `delete <name>` | Delete a saved connection |
+
+Use `--name "<operation>"` with either form of `operations` to inspect the operation’s input and output schemas.
+
+`types` and `list` print a table by default. Pass `--json` or `--csv` for structured output. Configuration and operation schemas are JSON.
+
+For `create`, supply a JSON object with `name`, `type`, `enabled`, `description`, and `configuration`. If `category` is omitted or empty, the CLI uses the category registered for that provider type. Use `type-config` to discover the configuration fields. For `create` and `update`, use an environment variable as the entire value of a configuration field, for example `"api_key": "$.env.SERVICE_API_KEY"`. The CLI reads the variable from its environment and sends its value as a string. An unset or empty variable stops the command. The following names are reserved for Conductor authentication: `CONDUCTOR_KEY`, `CONDUCTOR_AUTH_KEY`, `CONDUCTOR_AUTH_SECRET`, `CONDUCTOR_AUTH_TOKEN`, `CONDUCTOR_ACCESS_KEY_ID`, and `CONDUCTOR_ACCESS_KEY_SECRET`. Other names, including `CONDUCTOR_INTEGRATED_APPS_STRIPE_KEY`, are supported. To rotate a credential, set the new value and run `update` again.
 
 ---
 
